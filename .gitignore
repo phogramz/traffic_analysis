@@ -1,0 +1,9 @@
+# created by virtualenv automatically
+Lib/
+Scripts/
+venv/
+yolov5/
+videosource/
+pyvenv.cfg
+crossings_log.txt
+crossings_log12.txt
