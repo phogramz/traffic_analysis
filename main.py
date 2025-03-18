@@ -8,11 +8,11 @@ import time
 crosswalk_zone = [(242, 285), (420, 316), (462, 450), (239, 431)] #
 # crosswalk_zone = [(168, 272), (420, 316), (462, 450), (140, 416)] # + зона за светофором
 group_zone = [(10, 530), (8, 126), (414, 266), (884, 534)]
-VCL_zone = [(8, 400), (4, 276), (516, 328), (944, 488)]  # Зона автомобилей
+VCL_zone = [(8, 400), (4, 310), (516, 328), (944, 488)]  # Зона автомобилей
 
 # Координаты светофора
-traffic_light_green = (366, 215)  # Зеленый свет
-traffic_light_red = (365, 205)  # Красный свет
+traffic_light_green = (366, 214)  # Зеленый свет
+traffic_light_red = (365, 206)  # Красный свет
 
 # Счетчики людей, перешедших на разный свет
 crossing_counter_green = 0
@@ -50,9 +50,9 @@ def get_traffic_light_color(frame):
     red_pixel = frame[traffic_light_red[1], traffic_light_red[0]]
     green_pixel = frame[traffic_light_green[1], traffic_light_green[0]]
 
-    if red_pixel[2] > 240: # 0-2: B,G,R
+    if red_pixel[2] > 180: # 0-2: B,G,R
         return "red"
-    if green_pixel[1] > 150:
+    if green_pixel[1] > 140:
         return "green"
     return "unknown"
 
