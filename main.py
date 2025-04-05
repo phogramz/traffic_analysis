@@ -5,10 +5,11 @@ from short import Sort
 import time
 
 # Определение координат зоны пешеходного перехода
-crosswalk_zone = [(242, 285), (420, 316), (462, 450), (239, 431)] #
+crosswalk_zone = [(242, 300), (420, 330), (462, 430), (239, 410)] #
 # crosswalk_zone = [(168, 272), (420, 316), (462, 450), (140, 416)] # + зона за светофором
 group_zone = [(10, 530), (8, 126), (414, 266), (884, 534)]
-VCL_zone = [(8, 400), (4, 310), (516, 328), (944, 488)]  # Зона автомобилей
+# VCL_zone = [(8, 400), (4, 310), (516, 328), (944, 488)]  # Зона автомобилей
+VCL_zone = [(8, 400), (4, 310), (460, 320), (500, 448)]  # Зона автомобилей
 
 # Координаты светофора
 traffic_light_green = (366, 214)  # Зеленый свет
@@ -45,16 +46,19 @@ VEHICLE_CLASSES = {2, 3, 5, 7}  # Автомобиль, мотоцикл, авт
 #     return "unknown"  # Если не удалось определить
 
 
-def get_traffic_light_color(frame):
+def get_traffic_light_color(frame, last_status):
     """ Определение цвета светофора по спектру пикселей. """
     red_pixel = frame[traffic_light_red[1], traffic_light_red[0]]
     green_pixel = frame[traffic_light_green[1], traffic_light_green[0]]
 
-    if red_pixel[2] > 180: # 0-2: B,G,R
+    new_status = last_status  # По умолчанию используем прошлый статус
+
+    if red_pixel[2] > 150: # 0-2: B,G,R
         return "red"
-    if green_pixel[1] > 140:
+    if green_pixel[1] > 130:
         return "green"
-    return "unknown"
+
+    return new_status
 
 # def count_people_in_zone(tracks, zone): # старая реализация, фиксирующая переход по средней нижней точке
 #     count = 0
@@ -82,13 +86,14 @@ def count_vehicles_in_vcl_zone(vehicles):
     )
 
 if __name__ == '__main__':
-    cap = cv2.VideoCapture("videosource/sochi1.mp4")
+    cap = cv2.VideoCapture("videosource/sochi5.mp4")
+    traffic_light_status = "unknown"  # Начальное состояние
     model = YOLO("yolov8n.pt") # ("yolov8s.pt") - точнее, но fps в 2 раза меньше
     tracker = Sort()
     vehicle_tracker = Sort()
     prev_frame_time = 0  # Для вычисления FPS
 
-    with open("crossings_log12.txt", "w") as log_file:
+    with open("crossings_log51.txt", "w") as log_file:
         log_file.write("Time | ID | Traffic Light | Group | Vehicles\n")
 
         while cap.isOpened():
@@ -97,7 +102,7 @@ if __name__ == '__main__':
                 break
 
             # Определяем текущий цвет светофора
-            traffic_light_status = get_traffic_light_color(frame)
+            traffic_light_status = get_traffic_light_color(frame, traffic_light_status)
 
             # Получаем результаты детекции
             results = model(frame, stream=True)
