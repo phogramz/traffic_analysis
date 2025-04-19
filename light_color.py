@@ -1,7 +1,7 @@
 import cv2
 
 # Координаты светофора
-traffic_light_green = (366, 214)  # Зеленый свет
+traffic_light_green = (364, 215)  # Зеленый свет
 traffic_light_red = (365, 206)  # Красный свет
 
 def get_traffic_light_color(frame, last_status):
@@ -13,14 +13,14 @@ def get_traffic_light_color(frame, last_status):
 
     if red_pixel[2] > 150: # 0-2: B,G,R
         return "red"
-    if green_pixel[1] > 130:
+    if green_pixel[1] > 120:
         return "green"
 
     return new_status
 
 if __name__ == '__main__':
-    cap = cv2.VideoCapture("videosource/sochi5.mp4")
-    traffic_light_status = "unknown"  # Начальное состояние
+    cap = cv2.VideoCapture("videosource/sochi7(5am).mp4")
+    traffic_light_status = "green"  # Начальное состояние
 
     while cap.isOpened():
         status, frame = cap.read()

@@ -3,6 +3,7 @@ import cv2
 from ultralytics import YOLO
 from short import Sort
 import time
+import torch
 
 # Определение координат зоны пешеходного перехода
 crosswalk_zone = [(242, 300), (420, 330), (462, 430), (239, 410)] #
@@ -12,7 +13,7 @@ group_zone = [(10, 530), (8, 126), (414, 266), (884, 534)]
 VCL_zone = [(8, 400), (4, 310), (460, 320), (500, 448)]  # Зона автомобилей
 
 # Координаты светофора
-traffic_light_green = (366, 214)  # Зеленый свет
+traffic_light_green = (364, 215)  # Зеленый свет
 traffic_light_red = (365, 206)  # Красный свет
 
 # Счетчики людей, перешедших на разный свет
@@ -55,7 +56,7 @@ def get_traffic_light_color(frame, last_status):
 
     if red_pixel[2] > 150: # 0-2: B,G,R
         return "red"
-    if green_pixel[1] > 130:
+    if green_pixel[1] > 120:
         return "green"
 
     return new_status
@@ -86,14 +87,22 @@ def count_vehicles_in_vcl_zone(vehicles):
     )
 
 if __name__ == '__main__':
-    cap = cv2.VideoCapture("videosource/sochi5.mp4")
+    cap = cv2.VideoCapture("videosource/sochi10(14-17).mp4")
     traffic_light_status = "unknown"  # Начальное состояние
+
+    print(torch.cuda.is_available())
+    print(torch.cuda.get_device_name(0))
+    device = 'cuda' if torch.cuda.is_available() else 'cpu'
+    print("Используемое устройство:", device)
+
     model = YOLO("yolov8n.pt") # ("yolov8s.pt") - точнее, но fps в 2 раза меньше
+    model.to(device)
+
     tracker = Sort()
     vehicle_tracker = Sort()
     prev_frame_time = 0  # Для вычисления FPS
 
-    with open("crossings_log51.txt", "w") as log_file:
+    with open("crossings_log_test.txt", "w") as log_file:
         log_file.write("Time | ID | Traffic Light | Group | Vehicles\n")
 
         while cap.isOpened():

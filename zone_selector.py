@@ -12,7 +12,7 @@ def draw_points(event, x, y, flags, param):
 
 
 if __name__ == "__main__":
-    cap = cv2.VideoCapture("videosource/sochi4.mp4")
+    cap = cv2.VideoCapture("videosource/sochi7(5am).mp4")
     cv2.namedWindow("Video")
     cv2.setMouseCallback("Video", draw_points)
 
